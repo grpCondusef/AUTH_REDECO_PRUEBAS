@@ -1,0 +1,35 @@
+version: '3'
+services:
+  auth_service:
+    container_name: auth_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+
+  nginx:
+    container_name: nginx-container
+    image: nginx:1.25.1
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - auth_service
+
+  db:
+    image: postgres:15.2-alpine3.17
+    restart: always
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=0neOne$1
+    ports:
+      - '5433:5433'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
